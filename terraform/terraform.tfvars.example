@@ -16,6 +16,9 @@ gpt4o_capacity       = 150 # 150K Tokens per minute
 search_replica_count = 2   # High availability active-active replicas
 log_retention_days   = 730 # 2-year hot analytics retention for HIPAA
 
+enable_foundry_iq_knowledge_base = true # Enable Foundry IQ context layer
+enable_web_search_mcp            = true # Enable Web Search MCP grounding
+
 tags = {
   Organization       = "Mosaic Healthcare System"
   ArchitecturePillar = "AI-Foundry-Model-Regulation"
@@ -23,3 +26,4 @@ tags = {
   DataClassification = "Clinical-AI-Inference"
   SecurityTier       = "Tier-1-Clinical-Restricted"
 }
+

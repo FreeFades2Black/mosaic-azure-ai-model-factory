@@ -87,7 +87,10 @@ graph TD
 - **Prompt Shield:** Detects adversarial injections, jailbreaks (DAN mode), and system overrides.
 - **Content Safety Gate:** Zero-tolerance filtering across Hate, Violence, Self-Harm, and Sexual categories ($\text{Severity} = 0$).
 - **HIPAA PHI Redactor:** Scans for SSNs, Medical Record Numbers (MRNs), phone numbers, and dates of birth.
-- **Groundedness Evaluator:** Asserts response alignment to source documents with a mandatory threshold ($\text{Score} \ge 4.00 / 5.00$).
+### 5. Foundry IQ & Web MCP Knowledge Sources
+- **Model Context Protocol (MCP v1.0):** Standard JSON-RPC 2.0 interface exposing enterprise knowledge bases to multi-agent architectures (Azure Agent Service, LangGraph, AutoGen).
+- **Agentic Multi-Hop Retrieval:** Automatic query planning and subquery decomposition with semantic reranking across internal knowledge stores.
+- **Web MCP Grounding:** Real-time web search integration filtering for authoritative medical domains (`nih.gov`, `pubmed.ncbi.nlm.nih.gov`, `cdc.gov`, `fda.gov`, `who.int`, `nejm.org`, `kdigo.org`, `nccn.org`).
 
 ---
 
@@ -97,20 +100,23 @@ graph TD
 mosaic-azure-ai-model-factory/
 ├── .github/
 │   └── workflows/
-│       ├── test-and-lint.yml           # Automated unit testing & linting
+│       ├── test-and-lint.yml           # Automated unit testing & linting (33 passed)
 │       ├── ai-foundry-eval-gate.yml    # Model evaluation & Content Safety compliance gate
 │       └── deploy-ai-infrastructure.yml# Automated OpenTofu/Terraform deployment via OIDC
 ├── terraform/
 │   ├── main.tf                         # AI Foundry Hub, Projects, OpenAI, GPT-4o, Embeddings, AI Search, Content Safety
 │   ├── variables.tf                    # Fully annotated variable schema with validation
-│   ├── outputs.tf                      # Endpoints, IDs, principal mappings
+│   ├── outputs.tf                      # Endpoints, IDs, principal mappings, Foundry IQ MCP URLs
 │   ├── providers.tf                    # azurerm and random providers configuration
 │   └── terraform.tfvars.example        # Sanitized enterprise deployment parameters
 ├── src/
 │   ├── agents/
-│   │   └── clinical_analyst_agent.py   # Autonomous clinical agent integrating GPT-4o, RAG, and Code Interpreter
+│   │   └── clinical_analyst_agent.py   # Autonomous agent coordinating GPT-4o, Foundry IQ MCP, and Code Interpreter
 │   ├── tools/
-│   │   └── code_interpreter_tool.py    # Sandboxed Python execution engine with clinical formula library
+│   │   ├── code_interpreter_tool.py    # Sandboxed Python execution engine with clinical formula library
+│   │   └── foundry_iq_mcp_tool.py      # Foundry IQ MCP client and Web Knowledge Source adapter
+│   ├── mcp_servers/
+│   │   └── foundry_iq_mcp_server.py    # Standard Model Context Protocol (MCP) JSON-RPC 2.0 / stdio server
 │   ├── fine_tuning/
 │   │   ├── dataset_generator.py        # Generates synthetic clinical JSONL datasets with HIPAA-safe records
 │   │   └── fine_tune_runner.py         # Submits & tracks Azure AI Foundry fine-tuning jobs (LoRA / SFT)
@@ -127,6 +133,7 @@ mosaic-azure-ai-model-factory/
 ├── tests/
 │   ├── conftest.py                     # Test fixtures and shared paths
 │   ├── test_code_interpreter.py        # Validates sandboxed execution and clinical calculation formulas
+│   ├── test_foundry_iq_mcp.py          # Validates MCP JSON-RPC protocol, Foundry IQ retrieval, and Web MCP grounding
 │   ├── test_dataset_generator.py       # Validates JSONL formatting and HIPAA safety
 │   ├── test_fine_tune_runner.py        # Validates fine-tuning payload generation and state tracking
 │   ├── test_rag_index_manager.py       # Validates Azure AI Search schema and vector dimensions
@@ -135,6 +142,7 @@ mosaic-azure-ai-model-factory/
 │   └── test_terraform_integrity.py     # Validates Terraform HCL syntax and line-by-line annotation density
 ├── docs/
 │   ├── ARCHITECTURE.md                 # Deep-dive architecture notes, diagrams, and component interactions
+│   ├── FOUNDRY_IQ_MCP_GUIDE.md         # Foundry IQ context engineering, MCP specification & Web Grounding
 │   ├── CODE_INTERPRETER_GUIDE.md       # Sandboxed execution, Azure Dynamic Sessions, and clinical math reference
 │   ├── MODEL_FINE_TUNING_GUIDE.md      # Comprehensive fine-tuning playbook (LoRA vs SFT, hyperparameters)
 │   ├── RAG_AND_VECTOR_SEARCH.md        # Azure AI Search HNSW indexing & Semantic Reranking reference
@@ -146,6 +154,7 @@ mosaic-azure-ai-model-factory/
 ├── LICENSE                             # Apache 2.0 License
 └── README.md                           # Master documentation
 ```
+
 
 ---
 

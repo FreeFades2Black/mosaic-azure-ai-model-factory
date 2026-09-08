@@ -8,6 +8,7 @@ Notice: Connects to Azure AI Agent Dynamic Sessions in cloud runtime.
 ==============================================================================
 """
 
+import ast
 import io
 import logging
 import math
@@ -15,6 +16,7 @@ import sys
 import time
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
+
 
 logger = logging.getLogger(__name__)
 
@@ -74,9 +76,11 @@ class CodeInterpreterTool:
         """Executes sanitized Python code within an isolated local sandbox or Azure session."""
         start_time = time.perf_counter()
         self.sanitize_code(python_code)
+        parsed_ast = ast.parse(python_code)
 
         stdout_capture = io.StringIO()
         stderr_capture = io.StringIO()
+
 
         # Safe global scope with standard mathematical and statistical libraries
         safe_globals: Dict[str, Any] = {
@@ -121,16 +125,27 @@ class CodeInterpreterTool:
             sys.stderr = stderr_capture
 
             # Execute compiled bytecode in isolated scope
-            compiled_code = compile(python_code, "<sandboxed_session>", "exec")
             local_scope: Dict[str, Any] = {}
-            exec(compiled_code, safe_globals, local_scope)
+            if parsed_ast.body and isinstance(parsed_ast.body[-1], ast.Expr):
+                *body_statements, last_expr = parsed_ast.body
+                if body_statements:
+                    exec(
+                        compile(ast.Module(body=body_statements, type_ignores=[]), "<sandboxed_session>", "exec"),
+                        safe_globals,
+                        local_scope,
+                    )
+                return_val = eval(
+                    compile(ast.Expression(body=last_expr.value), "<sandboxed_session>", "eval"),
+                    safe_globals,
+                    local_scope,
+                )
+            else:
+                exec(compile(parsed_ast, "<sandboxed_session>", "exec"), safe_globals, local_scope)
+                if "result" in local_scope:
+                    return_val = local_scope["result"]
+                elif local_scope:
+                    return_val = list(local_scope.values())[-1]
 
-            # Capture last variable or explicit 'result' variable
-            if "result" in local_scope:
-                return_val = local_scope["result"]
-            elif local_scope:
-                # Capture the most recently created variable
-                return_val = list(local_scope.values())[-1]
 
         except Exception as e:
             status = "error"
@@ -188,6 +203,10 @@ class CodeInterpreterTool:
 
         return {
             "calculate_egfr_cockcroft_gault": calculate_egfr_cockcroft_gault,
+            "clinical_egfr_cockcroft_gault": calculate_egfr_cockcroft_gault,
             "calculate_body_surface_area": calculate_body_surface_area,
-            "calculate_mme": calculate_mme
+            "clinical_bsa_mosteller": calculate_body_surface_area,
+            "calculate_mme": calculate_mme,
+            "clinical_opioid_mme_conversion": calculate_mme,
         }
+

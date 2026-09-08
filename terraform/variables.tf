@@ -114,3 +114,18 @@ variable "tags" {
     SecurityTier       = "Tier-1-Clinical-Restricted"                                     # Security classification
   }
 }
+
+# Foundry IQ Enterprise Knowledge Base integration toggle
+variable "enable_foundry_iq_knowledge_base" {
+  type        = bool                                                                      # Boolean flag
+  description = "Enable Azure AI Foundry IQ enterprise context engineering and knowledge layer." # Description
+  default     = true                                                                      # Default enabled
+}
+
+# Web Search MCP Grounding Service toggle
+variable "enable_web_search_mcp" {
+  type        = bool                                                                      # Boolean flag
+  description = "Enable real-time Web Search MCP server integration for authoritative medical literature grounding." # Description
+  default     = true                                                                      # Default enabled
+}
+

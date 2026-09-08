@@ -77,3 +77,16 @@ output "ai_storage_account_name" {
   value       = azurerm_storage_account.ai_storage.name           # Storage account name
   description = "Name of the storage account used for AI datasets and fine-tuning weights."
 }
+
+# Foundry IQ Enterprise Knowledge Base Endpoint
+output "foundry_iq_knowledge_base_endpoint" {
+  value       = "https://${azurerm_ai_foundry.hub.name}.services.ai.azure.com/iq/v1/kb" # Foundry IQ KB endpoint
+  description = "HTTPS endpoint URI for the Foundry IQ Enterprise Context Knowledge Base."
+}
+
+# Model Context Protocol (MCP) Server Endpoint for Agent Tooling
+output "foundry_iq_mcp_server_endpoint" {
+  value       = "https://${azurerm_ai_foundry.hub.name}.services.ai.azure.com/mcp/v1" # Foundry IQ MCP endpoint
+  description = "Standard Model Context Protocol (MCP) JSON-RPC 2.0 / SSE endpoint for agent tool connections."
+}
+
