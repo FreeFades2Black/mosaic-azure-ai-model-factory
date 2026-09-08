@@ -39,8 +39,9 @@ graph TD
             EmbeddingModel["text-embedding-3-large (3,072-D)"]
         end
 
-        subgraph "RAG Vector Index & Safety Guardrails"
+        subgraph "RAG Vector Index & Tooling Subsystem"
             AISearch["Azure AI Search<br/>(HNSW Vector Index + Semantic Ranker)"]
+            CodeInterpreter["Code Interpreter Tool<br/>(Sandboxed Python Runtime / Clinical Math)"]
             SafetyShield["Azure AI Content Safety<br/>(Prompt Shield + Severity=0)"]
             PHIScan["HIPAA PHI Scanner<br/>(Zero-Leak Enforcement)"]
         end
@@ -56,6 +57,7 @@ graph TD
     SafetyShield -->|Pass| PHIScan
     PHIScan -->|Pass| GPT4o
     AISearch -->|Context Grounding| GPT4o
+    CodeInterpreter <-->|Deterministic Computation| GPT4o
     EmbeddingModel --> AISearch
     GPT4o --> Storage
     GPT4o --> KeyVault
@@ -76,7 +78,12 @@ graph TD
 - **HNSW Vector Indexing:** Hierarchical Navigable Small World algorithm with Cosine distance metric.
 - **Microsoft Semantic Ranker:** Re-ranks top-$50$ vector results using deep learning models to ensure maximum clinical relevance.
 
-### 3. Multi-Tiered AI Governance & Safety Shields
+### 3. Sandboxed Python Code Interpreter Tool
+- **Deterministic Math Engine:** Resolves complex clinical pharmacology formulas (eGFR Cockcroft-Gault, Mosteller Body Surface Area, Morphine Milligram Equivalents).
+- **Sandboxed Execution:** Enforces execution timeout boundaries ($5.0\text{s}$), memory limits, and static AST security checks blocking unsafe system imports.
+- **Tabular Data Processing:** Ingests and aggregates structured longitudinal EHR and lab telemetry.
+
+### 4. Multi-Tiered AI Governance & Safety Shields
 - **Prompt Shield:** Detects adversarial injections, jailbreaks (DAN mode), and system overrides.
 - **Content Safety Gate:** Zero-tolerance filtering across Hate, Violence, Self-Harm, and Sexual categories ($\text{Severity} = 0$).
 - **HIPAA PHI Redactor:** Scans for SSNs, Medical Record Numbers (MRNs), phone numbers, and dates of birth.
@@ -100,6 +107,10 @@ mosaic-azure-ai-model-factory/
 │   ├── providers.tf                    # azurerm and random providers configuration
 │   └── terraform.tfvars.example        # Sanitized enterprise deployment parameters
 ├── src/
+│   ├── agents/
+│   │   └── clinical_analyst_agent.py   # Autonomous clinical agent integrating GPT-4o, RAG, and Code Interpreter
+│   ├── tools/
+│   │   └── code_interpreter_tool.py    # Sandboxed Python execution engine with clinical formula library
 │   ├── fine_tuning/
 │   │   ├── dataset_generator.py        # Generates synthetic clinical JSONL datasets with HIPAA-safe records
 │   │   └── fine_tune_runner.py         # Submits & tracks Azure AI Foundry fine-tuning jobs (LoRA / SFT)
@@ -115,6 +126,7 @@ mosaic-azure-ai-model-factory/
 │       └── model_regulation_gate.py    # Multi-gate automated policy enforcement engine
 ├── tests/
 │   ├── conftest.py                     # Test fixtures and shared paths
+│   ├── test_code_interpreter.py        # Validates sandboxed execution and clinical calculation formulas
 │   ├── test_dataset_generator.py       # Validates JSONL formatting and HIPAA safety
 │   ├── test_fine_tune_runner.py        # Validates fine-tuning payload generation and state tracking
 │   ├── test_rag_index_manager.py       # Validates Azure AI Search schema and vector dimensions
@@ -123,6 +135,7 @@ mosaic-azure-ai-model-factory/
 │   └── test_terraform_integrity.py     # Validates Terraform HCL syntax and line-by-line annotation density
 ├── docs/
 │   ├── ARCHITECTURE.md                 # Deep-dive architecture notes, diagrams, and component interactions
+│   ├── CODE_INTERPRETER_GUIDE.md       # Sandboxed execution, Azure Dynamic Sessions, and clinical math reference
 │   ├── MODEL_FINE_TUNING_GUIDE.md      # Comprehensive fine-tuning playbook (LoRA vs SFT, hyperparameters)
 │   ├── RAG_AND_VECTOR_SEARCH.md        # Azure AI Search HNSW indexing & Semantic Reranking reference
 │   ├── GOVERNANCE_AND_SAFETY.md        # Content Safety thresholds, Prompt Shields, and HIPAA compliance

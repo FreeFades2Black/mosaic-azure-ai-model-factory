@@ -21,8 +21,9 @@ graph TD
             EmbeddingModel["text-embedding-3-large (3,072-D)"]
         end
 
-        subgraph "Retrieval-Augmented Generation & Safety"
+        subgraph "Retrieval-Augmented Generation & Tooling"
             AISearch["Azure AI Search<br/>(HNSW Vector Index + Semantic Ranker)"]
+            CodeInterpreter["Code Interpreter Tool<br/>(Sandboxed Python Runtime / Math Engine)"]
             SafetyShield["Azure AI Content Safety<br/>(Prompt Shield + Harm Severity=0)"]
             PHIScan["HIPAA PHI Redactor<br/>(Zero-Leak Enforcement)"]
         end
@@ -38,6 +39,7 @@ graph TD
     SafetyShield -->|Pass| PHIScan
     PHIScan -->|Pass| GPT4o
     AISearch -->|Context Grounding| GPT4o
+    CodeInterpreter <-->|Deterministic Computation| GPT4o
     EmbeddingModel --> AISearch
     GPT4o --> Storage
     GPT4o --> KeyVault
@@ -51,5 +53,6 @@ graph TD
 | **Governance Hub** | `azurerm_ai_foundry` | Role-Based Access Control (RBAC), Entra ID Managed Identity, Disallow Public Network Access. |
 | **Inference Engine** | `azurerm_cognitive_account` (OpenAI) | GlobalStandard TPM scaling, CMK Encryption at Rest, TLS 1.3 in Transit. |
 | **Vector Index** | `azurerm_search_service` | 3,072-dimension HNSW cosine indexing with deep learning Semantic Reranking. |
+| **Code Interpreter** | Azure Dynamic Sessions / Sandbox | Ephemeral containerized execution with memory/timeout boundaries and AST safety filters. |
 | **Safety Guardrail** | `azurerm_cognitive_account` (ContentSafety) | Prompt Shield against jailbreaks and zero-tolerance harm scoring (Hate/Violence/Self-Harm=0). |
 | **Audit Pipeline** | `azurerm_log_analytics_workspace` | Diagnostic log streaming with 730-day retention for HIPAA § 164.312 compliance. |
