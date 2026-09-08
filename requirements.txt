@@ -1,0 +1,15 @@
+# Azure AI SDK & Inference
+azure-ai-projects>=1.0.0b1
+azure-ai-inference>=1.0.0b1
+azure-ai-contentsafety>=1.0.0
+azure-search-documents>=11.4.0
+azure-identity>=1.15.0
+azure-storage-blob>=12.19.0
+openai>=1.20.0
+
+# Evaluation, Testing & Telemetry
+pytest>=8.0.0
+pytest-cov>=4.1.0
+pyyaml>=6.0.1
+requests>=2.31.0
+numpy>=1.26.0

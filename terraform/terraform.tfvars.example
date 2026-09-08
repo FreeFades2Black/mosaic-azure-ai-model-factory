@@ -1,0 +1,25 @@
+# --------------------------------------------------------------------------------------------------
+# MOSAIC HEALTHCARE ENTERPRISE AZURE AI FOUNDRY MODULE
+# Example Input Variable Definitions (Sanitized)
+# --------------------------------------------------------------------------------------------------
+# File: terraform/terraform.tfvars.example
+# --------------------------------------------------------------------------------------------------
+
+prefix              = "mosaic"
+environment         = "prod"
+location            = "eastus2"
+resource_group_name = "rg-mosaic-health-ai-prod"
+key_vault_id        = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-mosaic-health-sec-prod/providers/Microsoft.KeyVault/vaults/mosaic-kv-prod-sec01"
+
+gpt4o_model_version  = "2024-11-20"
+gpt4o_capacity       = 150 # 150K Tokens per minute
+search_replica_count = 2   # High availability active-active replicas
+log_retention_days   = 730 # 2-year hot analytics retention for HIPAA
+
+tags = {
+  Organization       = "Mosaic Healthcare System"
+  ArchitecturePillar = "AI-Foundry-Model-Regulation"
+  ComplianceStandard = "HITRUST-CSF-v11"
+  DataClassification = "Clinical-AI-Inference"
+  SecurityTier       = "Tier-1-Clinical-Restricted"
+}
