@@ -25,4 +25,4 @@ jobs:
 
       - name: Execute Model Regulation Gate Tests
         run: |
-          pytest tests/test_safety_and_phi.py tests/test_groundedness_gate.py -v
+          python -m pytest tests/test_safety_and_phi.py tests/test_groundedness_gate.py -v
