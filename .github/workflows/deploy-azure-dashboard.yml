@@ -1,0 +1,45 @@
+name: Deploy Azure Portal Executive Dashboard
+
+on:
+  workflow_dispatch:
+    inputs:
+      resource_group:
+        description: "Target Azure Resource Group"
+        required: true
+        default: "rg-sentinel-operations"
+      location:
+        description: "Azure Region"
+        required: true
+        default: "eastus2"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-dashboard:
+    name: Deploy Shared Portal Dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login via OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          allow-no-subscriptions: true
+
+      - name: Deploy Dashboard to Azure
+        run: |
+          echo "[+] Creating resource group ${{ inputs.resource_group }}..."
+          az group create --name "${{ inputs.resource_group }}" --location "${{ inputs.location }}" --output table
+
+          echo "[+] Deploying Sentinel Azure Portal Executive Dashboard..."
+          az deployment group create \
+            --resource-group "${{ inputs.resource_group }}" \
+            --template-file azure/azuredeploy.json \
+            --parameters dashboardName="Sentinel-AI-Foundry-Operations-Dashboard" location="${{ inputs.location }}" \
+            --output table
