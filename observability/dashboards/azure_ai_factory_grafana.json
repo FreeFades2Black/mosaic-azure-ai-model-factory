@@ -1,0 +1,70 @@
+{
+  "title": "Azure AI Model Factory Golden Signals",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "title": "LLM Inference Completion Latency (p95 / p99)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(openai_completion_latency_seconds_bucket[5m]))",
+          "legendFormat": "p95 Latency (s)"
+        }
+      ]
+    },
+    {
+      "title": "Token-Per-Minute (TPM) Utilization %",
+      "type": "gauge",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "azure_openai_tpm_used / azure_openai_tpm_limit * 100",
+          "legendFormat": "% TPM Consumed"
+        }
+      ]
+    },
+    {
+      "title": "HNSW Vector Search Latency (ms)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "rate(vector_search_latency_ms_sum[5m]) / rate(vector_search_latency_ms_count[5m])",
+          "legendFormat": "Avg Query (ms)"
+        }
+      ]
+    },
+    {
+      "title": "Prompt Shield Injections Blocked / hr",
+      "type": "stat",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(prompt_shield_blocks_total[1h]))",
+          "legendFormat": "Blocked Attacks"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+groups:
+  - name: ai_model_factory_alerts
+    rules:
+      - alert: OpenAITPMQuotaExhaustionImminent
+        expr: azure_openai_tpm_used / azure_openai_tpm_limit > 0.85
+        for: 2m
+        labels:
+          severity: critical
+          tier: ai-inference
+        annotations:
+          summary: "Azure OpenAI TPM quota utilization >85%"
+          description: "Inference rate approaching provisioning ceiling. Trigger multi-region gateway routing."
+
+      - alert: PromptInjectionSurge
+        expr: sum(rate(prompt_shield_blocks_total[5m])) > 5
+        for: 1m
+        labels:
+          severity: warning
+          tier: security
+        annotations:
+          summary: "Spike in blocked prompt injection attempts"
+          description: "High rate of malicious prompt payloads detected by Azure AI Content Safety."
