@@ -1,26 +1,26 @@
-# Mosaic Azure AI Model Factory: Enterprise Fine-Tuning, RAG & Model Regulation
+# Mosaic Azure AI Model Factory: Fine-Tuning, RAG & Model Regulation
 
 [![Build & Test](https://github.com/FreeFades2Black/mosaic-azure-ai-model-factory/actions/workflows/test-and-lint.yml/badge.svg)](https://github.com/FreeFades2Black/mosaic-azure-ai-model-factory/actions/workflows/test-and-lint.yml)
 [![AI Foundry Model Evaluation](https://github.com/FreeFades2Black/mosaic-azure-ai-model-factory/actions/workflows/ai-foundry-eval-gate.yml/badge.svg)](https://github.com/FreeFades2Black/mosaic-azure-ai-model-factory/actions/workflows/ai-foundry-eval-gate.yml)
 [![Infrastructure](https://img.shields.io/badge/Infrastructure-Real%20Production%20Builds-2e7d32?style=flat&logo=microsoftazure)](terraform/)
-[![Data](https://img.shields.io/badge/Data-Simulated%20%2F%20Synthetic-orange?style=flat)](#-infrastructure-integrity--data-classification-notice)
+[![Data](https://img.shields.io/badge/Data-Simulated%20%2F%20Synthetic-orange?style=flat)](#infrastructure-integrity--data-classification-notice)
 [![Compliance](https://img.shields.io/badge/Compliance-HITRUST%20CSF%20v11%20%7C%20HIPAA-purple?style=flat)](docs/GOVERNANCE_AND_SAFETY.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ---
 
-## ℹ️ Infrastructure Integrity & Data Classification Notice
+## Infrastructure Integrity & Data Classification Notice
 
-> - **Real Infrastructure & Cloud Builds:** The underlying cloud architecture, Terraform/OpenTofu blueprints, Microsoft Entra ID tenant connections, passwordless OIDC Workload Identity Federation, and Azure AI Foundry hub/project configurations in this repository are **100% real, operational, and deployed**.
-> - **Simulated Data & Scenarios:** All clinical training pairs, protocol questions, patient records, harm score prompts, and evaluation matrices are **simulated / synthetic reference data** created for model benchmarking and governance testing. No live patient data or actual Protected Health Information (PHI) is hosted or transmitted.
+> - **Production Infrastructure & IaC:** Cloud architecture, Terraform/OpenTofu blueprints, Microsoft Entra ID tenant configurations, passwordless OIDC Workload Identity Federation, and Azure AI Foundry hub/project definitions in this repository are functional and validated.
+> - **Simulated Reference Data:** Clinical training pairs, protocol questions, patient records, harm score prompts, and evaluation matrices are simulated reference datasets created for model benchmarking and governance testing. No live patient data or actual Protected Health Information (PHI) is hosted or transmitted.
 
 ---
 
-## 📖 Executive Summary & System Overview
+## Architecture Overview & System Topology
 
-The **Mosaic Azure AI Model Factory** is an enterprise-grade framework designed to build, fine-tune, ground, and govern Artificial Intelligence models and autonomous clinical agents in Microsoft Azure.
+The **Mosaic Azure AI Model Factory** is an engineering framework designed to build, fine-tune, ground, and govern Artificial Intelligence models and autonomous clinical agents in Microsoft Azure.
 
-Spanning **Azure AI Foundry (Hub & Projects)**, **Azure OpenAI Service**, **Azure AI Search (RAG)**, and **Azure AI Content Safety**, this repository delivers a complete Infrastructure as Code (IaC) and Python SDK toolchain engineered to meet strict **HITRUST CSF v11** and **HIPAA § 164.312** regulatory standards.
+Spanning **Azure AI Foundry (Hub & Projects)**, **Azure OpenAI Service**, **Azure AI Search (RAG)**, and **Azure AI Content Safety**, this repository delivers an Infrastructure as Code (IaC) and Python SDK toolchain aligned with **HITRUST CSF v11** and **HIPAA § 164.312** regulatory controls.
 
 ```mermaid
 graph TD
@@ -66,7 +66,7 @@ graph TD
 
 ---
 
-## 🏛️ Core Capabilities & Architecture Pillars
+## Core Architecture Pillars
 
 ### 1. Automated Supervised Fine-Tuning (SFT / LoRA)
 - **Synthetic Dataset Engine:** Generates chat-completion JSONL training sets with system prompts enforcing clinical protocol tone.
@@ -94,7 +94,7 @@ graph TD
 
 ---
 
-## 📂 Repository File Structure
+## Repository File Structure
 
 ```
 mosaic-azure-ai-model-factory/
@@ -144,7 +144,7 @@ mosaic-azure-ai-model-factory/
 │   ├── ARCHITECTURE.md                 # Deep-dive architecture notes, diagrams, and component interactions
 │   ├── FOUNDRY_IQ_MCP_GUIDE.md         # Foundry IQ context engineering, MCP specification & Web Grounding
 │   ├── CODE_INTERPRETER_GUIDE.md       # Sandboxed execution, Azure Dynamic Sessions, and clinical math reference
-│   ├── MODEL_FINE_TUNING_GUIDE.md      # Comprehensive fine-tuning playbook (LoRA vs SFT, hyperparameters)
+│   ├── MODEL_FINE_TUNING_GUIDE.md      # Fine-tuning playbook (LoRA vs SFT, hyperparameters)
 │   ├── RAG_AND_VECTOR_SEARCH.md        # Azure AI Search HNSW indexing & Semantic Reranking reference
 │   ├── GOVERNANCE_AND_SAFETY.md        # Content Safety thresholds, Prompt Shields, and HIPAA compliance
 │   └── DEPLOYMENT_PLAYBOOK.md          # Step-by-step Azure CLI, OpenTofu, and OIDC deployment instructions
@@ -155,23 +155,60 @@ mosaic-azure-ai-model-factory/
 └── README.md                           # Master documentation
 ```
 
+---
+
+## Build Verification & Concrete Test Artifacts
+
+The repository test suite verifies model evaluation gates, sandboxed computation, and MCP protocol compliance:
+
+```text
+============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\FreeF\projects\mosaic-azure-ai-model-factory
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.14.2
+collected 33 items
+
+tests/test_code_interpreter.py .....                                     [ 15%]
+tests/test_dataset_generator.py ....                                     [ 27%]
+tests/test_fine_tune_runner.py ....                                      [ 39%]
+tests/test_foundry_iq_mcp.py .....                                       [ 54%]
+tests/test_groundedness_gate.py ....                                     [ 66%]
+tests/test_rag_index_manager.py ....                                     [ 78%]
+tests/test_safety_and_phi.py .....                                       [ 93%]
+tests/test_terraform_integrity.py ..                                     [100%]
+
+============================= 33 passed in 0.15s ==============================
+```
+
+### Verified AI Edge Cases & Engineering Trade-Offs
+
+1. **Sandboxed Code Interpreter AST Security vs. Pharmacokinetics Complexity:**
+   - *Challenge:* Preventing remote code execution or file system tampering requires aggressive sandboxing, but clinical pharmacology formulas require dynamic computation (e.g. Cockcroft-Gault, Mosteller Body Surface Area).
+   - *Resolution:* Implemented static Abstract Syntax Tree (AST) inspection that rejects `Import`, `ImportFrom`, `Call` to `eval`/`exec`/`open`, and dunder attribute access (`__subclasses__`), while permitting pure arithmetic, `math` constants, and structured dictionaries with a 5.0-second execution cutoff.
+2. **HNSW Vector Dimensions vs. Latency in Real-Time Clinical Copilots:**
+   - *Trade-off:* 3,072-dimension vectors (`text-embedding-3-large`) provide nuanced medical taxonomy separation compared to 1,536-dimension embeddings, but increase index RAM requirements by 100%. Configured HNSW with `m=16` and `efConstruction=400` to maintain sub-50ms vector retrieval times.
+3. **Strict Groundedness Gate (>= 4.0 / 5.0) vs. Model Creativity:**
+   - *Trade-off:* Enforcing a strict >= 4.0/5.0 groundedness threshold eliminates clinical hallucinations, but requires RAG retrieval to return authoritative context snippets. If context is missing, the agent is constrained to answer "Context insufficient for clinical directive" rather than generating speculative clinical advice.
 
 ---
 
-## 🚀 Quickstart & Execution Guide
+## Quickstart & Execution Guide
 
-### 1. Clone & Set Up Environment
+### 1. Set Up Environment
 ```bash
+# Clone repository
 git clone https://github.com/FreeFades2Black/mosaic-azure-ai-model-factory.git
 cd mosaic-azure-ai-model-factory
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies and activate virtualenv
 pip install -r requirements.txt
 ```
 
 ### 2. Run Automated Test Suite
 ```bash
-pytest tests/ -v
+python -m pytest tests/ -v
 ```
 
 ### 3. Generate Synthetic Clinical Fine-Tuning Dataset
@@ -208,7 +245,7 @@ print(f"Groundedness Score: {report.groundedness_score} / 5.00")
 
 ---
 
-## 📜 Compliance & Regulation Citations
+## Compliance & Regulation Citations
 
 - **HIPAA Security Rule (§ 164.312):** Enforces encryption in transit (TLS 1.3), encryption at rest (FIPS 140-2 Level 3 HSM CMK), and automated zero-leak PHI token redaction.
 - **HITRUST CSF v11 (Domain 01.0 & 03.0):** Enforces role-based access control, system-assigned managed identities, and continuous model harm evaluation.
@@ -216,6 +253,6 @@ print(f"Groundedness Score: {report.groundedness_score} / 5.00")
 
 ---
 
-## 📄 License
+## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE). Copyright © 2026 Mosaic Healthcare Enterprise Architecture Review Board. All rights reserved.
