@@ -9,6 +9,7 @@ jobs:
   evaluate-models:
     name: Evaluate Content Safety, Groundedness & PHI Redaction
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
