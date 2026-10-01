@@ -10,6 +10,7 @@ jobs:
   test:
     name: Run Pytest & Terraform Validation
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
