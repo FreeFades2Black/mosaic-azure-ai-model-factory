@@ -11,6 +11,7 @@ jobs:
   deploy-infrastructure:
     name: Provision AI Foundry Hub, Projects & Models via OpenTofu
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
