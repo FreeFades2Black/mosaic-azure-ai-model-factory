@@ -20,6 +20,7 @@ jobs:
   deploy-dashboard:
     name: Deploy Shared Portal Dashboard
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
